@@ -1,6 +1,6 @@
 # One-click installer + launcher for the Prominence II: Hasturian Era server.
 # First run: downloads Java 17 + the v4.1.4 server pack, applies our tuned configs,
-# imports world.zip if present, then starts the server. Later runs just start it.
+# then starts the server (a fresh world is generated). Later runs just start it.
 param([switch]$NoStart)
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
@@ -75,14 +75,7 @@ if (-not (Test-Path (Join-Path $Server 'server.properties'))) {
 }
 Set-Content (Join-Path $Server 'eula.txt') 'eula=true' -Encoding ascii
 
-# 4. Existing world
-$worldZip = Join-Path $Root 'world.zip'
-if (-not (Test-Path (Join-Path $Server 'world')) -and (Test-Path $worldZip)) {
-    Step 'Importing world.zip...'
-    Extract $worldZip $Server
-}
-
-# 5. playit reminder
+# 4. playit reminder
 $playit = Get-Process playit*, playitd* -ErrorAction SilentlyContinue
 if (-not $playit) {
     Write-Host "`nplayit.gg agent is NOT running - friends won't be able to connect. Start it (see README)." -ForegroundColor Yellow
